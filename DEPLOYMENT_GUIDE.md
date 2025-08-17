@@ -21,10 +21,10 @@ This guide will help you deploy the YouTube Playlist Rooms application on a VPS 
 2. **Download and run the deployment script**
    ```bash
    # For localhost deployment
-   curl -sSL https://raw.githubusercontent.com/your-repo/youtube-playlist-rooms/main/deploy.sh | bash
+   curl -sSL https://raw.githubusercontent.com/RenatoPeter/yt/main/deploy.sh | bash
    
    # For domain deployment
-   curl -sSL https://raw.githubusercontent.com/your-repo/youtube-playlist-rooms/main/deploy.sh | bash -s yourdomain.com admin@yourdomain.com
+   curl -sSL https://raw.githubusercontent.com/RenatoPeter/yt/main/deploy.sh | bash -s yourdomain.com admin@yourdomain.com
    ```
 
 3. **Access your application**
@@ -55,7 +55,7 @@ This guide will help you deploy the YouTube Playlist Rooms application on a VPS 
 2. **Clone or upload application**
    ```bash
    # Option A: Git clone
-   sudo git clone https://github.com/your-repo/youtube-playlist-rooms.git /opt/youtube-playlist-rooms
+   sudo git clone https://github.com/RenatoPeter/yt.git /opt/youtube-playlist-rooms
    
    # Option B: Upload files manually
    sudo mkdir -p /opt/youtube-playlist-rooms

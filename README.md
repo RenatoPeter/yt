@@ -19,7 +19,7 @@ A real-time collaborative YouTube playlist sharing application that allows users
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/youtube-playlist-rooms.git
+git clone https://github.com/RenatoPeter/yt.git
 cd youtube-playlist-rooms
 
 # Copy environment file
@@ -36,7 +36,7 @@ docker-compose up -d
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/youtube-playlist-rooms.git
+git clone https://github.com/RenatoPeter/yt.git
 cd youtube-playlist-rooms
 
 # Install Python dependencies
@@ -52,7 +52,7 @@ python app.py
 
 ```bash
 # One-command deployment
-curl -sSL https://raw.githubusercontent.com/your-repo/youtube-playlist-rooms/main/deploy.sh | bash -s yourdomain.com admin@yourdomain.com
+curl -sSL https://raw.githubusercontent.com/RenatoPeter/yt/main/deploy.sh | bash -s yourdomain.com admin@yourdomain.com
 ```
 
 ## 🏗️ Architecture
@@ -162,10 +162,10 @@ docker run -d -p 5000:5000 --name youtube-playlist-rooms youtube-playlist-rooms
 
 ```bash
 # Deploy to VPS with domain
-curl -sSL https://raw.githubusercontent.com/your-repo/youtube-playlist-rooms/main/deploy.sh | bash -s yourdomain.com admin@yourdomain.com
+curl -sSL https://raw.githubusercontent.com/RenatoPeter/yt/main/deploy.sh | bash -s yourdomain.com admin@yourdomain.com
 
 # Deploy to VPS without domain (localhost)
-curl -sSL https://raw.githubusercontent.com/your-repo/youtube-playlist-rooms/main/deploy.sh | bash
+curl -sSL https://raw.githubusercontent.com/RenatoPeter/yt/main/deploy.sh | bash
 ```
 
 ### Manual Deployment
