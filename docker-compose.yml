@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  youtube-playlist-rooms:
+    build: .
+    ports:
+      - "9904:9904"
+    environment:
+      - FLASK_ENV=production
+      - HOST=213.181.206.134
+      - PORT=9904
+      - SECRET_KEY=8b3f5a2d1c7e9f0a6d4b1c2e3f9a7b6c
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9904/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Nginx reverse proxy for SSL termination
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "9902:9902"
+      - "9903:9903"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - youtube-playlist-rooms
+    restart: unless-stopped
+    profiles:
+      - nginx

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Lejátszási Lista Szoba</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="room-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="room-container">
+        <!-- Room Header -->
+        <header class="room-header">
+            <div class="room-info">
+                <h1 id="roomName">Szoba Neve</h1>
+                <div class="room-stats">
+                    <span id="participantCount">0 résztvevő</span>
+                    <span id="playlistCount">0 videó</span>
+                </div>
+            </div>
+            <div class="room-actions">
+                <button id="settingsBtn" class="btn btn-secondary" style="display: none;">
+                    <i class="fas fa-cog"></i> Beállítások
+                </button>
+                <button id="leaveRoom" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Szoba Elhagyása
+                </button>
+            </div>
+        </header>
+
+        <div class="room-content">
+            <!-- Left Column - Video and Participants -->
+            <div class="left-column">
+                <!-- Video Section -->
+                <div class="video-section">
+                    <div class="video-container">
+                        <div id="youtubePlayer"></div>
+                        <div class="video-overlay" id="videoOverlay" style="display: none;">
+                            <div class="overlay-message">
+                                <i class="fas fa-lock"></i>
+                                <p>Nincs jogosultság a videó vezérléséhez</p>
+                            </div>
+                        </div>
+                        <div class="blank-video-state" id="blankVideoState" style="display: none;">
+                            <div class="blank-video-content">
+                                <i class="fas fa-video-slash"></i>
+                                <h3>Nincs Lejátszott Videó</h3>
+                                <p>Add hozzá videókat a lejátszási listához a nézéshez</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Participants Section -->
+                <div class="participants-section">
+                    <h2><i class="fas fa-users"></i> Résztvevők</h2>
+                    <div class="participants-list" id="participantsList">
+                        <!-- Participants will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Controls and Playlist -->
+            <div class="right-column">
+                <!-- Video Controls Section -->
+                <div class="video-controls-section">
+                    <div class="video-controls">
+                        <button id="playPauseBtn" class="btn btn-primary">
+                            <i class="fas fa-play"></i> Lejátszás
+                        </button>
+                        <button id="skipBtn" class="btn btn-primary">
+                            <i class="fas fa-forward"></i> Következő
+                        </button>
+                        <div class="volume-control">
+                            <i class="fas fa-volume-up"></i>
+                            <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Playlist Section -->
+                <div class="playlist-section">
+                    <div class="playlist-header">
+                        <h2><i class="fas fa-list"></i> Lejátszási Lista</h2>
+                        <button id="addVideoBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Videó Hozzáadása
+                        </button>
+                    </div>
+                    <div class="playlist-container" id="playlistContainer">
+                        <div class="empty-playlist">
+                            <i class="fas fa-music"></i>
+                            <p>Nincs videó a lejátszási listában</p>
+                            <p>Add hozzá az első videódat a kezdéshez!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Video Modal -->
+    <div id="addVideoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>YouTube Videó vagy Lejátszási Lista Hozzáadása</h3>
+                <button class="close-btn" id="closeAddVideoModal">&times;</button>
+            </div>
+            <form id="addVideoModalForm">
+                <div class="form-group">
+                    <label for="modalVideoUrl">YouTube URL</label>
+                    <input type="url" id="modalVideoUrl" required placeholder="https://www.youtube.com/watch?v=... vagy https://www.youtube.com/playlist?list=...">
+                </div>
+                <button type="submit" class="btn btn-primary">Videó/Lista Hozzáadása</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Room Settings Modal (Leader Only) -->
+    <div id="roomSettingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Szoba Beállítások</h3>
+                <button class="close-btn" id="closeSettingsModal">&times;</button>
+            </div>
+            <form id="roomSettingsForm">
+                <div class="form-group">
+                    <label for="roomPassword">Szoba Jelszó</label>
+                    <input type="password" id="roomPassword" placeholder="Hagyd üresen jelszó nélkül">
+                </div>
+                <div class="form-group">
+                    <label for="transferLeader">Vezetői Jog Átadása</label>
+                    <select id="transferLeader">
+                        <option value="">Válassz egy résztvevőt...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <h4>Szoba Jogosultságok</h4>
+                    <p class="permissions-description">Szabályozd, mit tehetnek a rendes felhasználók ebben a szobában:</p>
+                    
+                    <div class="permissions-section">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="permissionPlayPause">
+                            <span class="checkmark"></span>
+                            <strong>Videó Leállítása/Indítása</strong> - A felhasználók vezérelhetik a videó lejátszását mindenkinek
+                        </label>
+                        
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="permissionVideoSeek">
+                            <span class="checkmark"></span>
+                            <strong>Videó Pozicionálás</strong> - A felhasználók előre/hátra ugorhatnak a videókban
+                        </label>
+                        
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="permissionAddVideo">
+                            <span class="checkmark"></span>
+                            <strong>Videó Hozzáadása</strong> - A felhasználók videókat adhatnak a lejátszási listához
+                        </label>
+                        
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="permissionRemoveVideo">
+                            <span class="checkmark"></span>
+                            <strong>Videó Eltávolítása</strong> - A felhasználók videókat távolíthatnak el a lejátszási listából
+                        </label>
+                        
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="permissionEditPlaylist">
+                            <span class="checkmark"></span>
+                            <strong>Lejátszási Lista Szerkesztése</strong> - A felhasználók átrendezhetik a videókat a lejátszási listában
+                        </label>
+                        
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="permissionKickMembers">
+                            <span class="checkmark"></span>
+                            <strong>Tagok Kirúgása</strong> - A felhasználók kirúghatnak más rendes felhasználókat (nem vezetőket)
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="deleteRoom">
+                        <span class="checkmark"></span>
+                        Szoba Törlése (Ez minden résztvevőt kirúg)
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">Beállítások Mentése</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Kick User Modal (Leader Only) -->
+    <div id="kickUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Felhasználó Kirúgása</h3>
+                <button class="close-btn" id="closeKickModal">&times;</button>
+            </div>
+            <form id="kickUserForm">
+                <div class="form-group">
+                    <label for="kickUserSelect">Válaszd ki a Kirúgandó Felhasználót</label>
+                    <select id="kickUserSelect" required>
+                        <option value="">Válassz egy felhasználót...</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-danger">Felhasználó Kirúgása</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="room-script.js"></script>
+</body>
+</html>
+

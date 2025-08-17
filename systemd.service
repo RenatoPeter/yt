@@ -1,0 +1,32 @@
+[Unit]
+Description=YouTube Playlist Rooms Application
+After=network.target
+
+[Service]
+Type=exec
+User=youtube-rooms
+Group=youtube-rooms
+WorkingDirectory=/opt/youtube-playlist-rooms
+Environment=FLASK_ENV=production
+Environment=HOST=213.181.206.134
+Environment=PORT=9904
+Environment=SECRET_KEY=your-super-secret-key-change-this-in-production
+Environment=CORS_ORIGINS=https://yourdomain.com
+Environment=LOG_LEVEL=INFO
+ExecStart=/opt/youtube-playlist-rooms/venv/bin/gunicorn --config gunicorn.conf.py wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=youtube-playlist-rooms
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/youtube-playlist-rooms/logs
+
+[Install]
+WantedBy=multi-user.target
